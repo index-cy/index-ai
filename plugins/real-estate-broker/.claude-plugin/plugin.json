@@ -1,0 +1,22 @@
+{
+  "name": "real-estate-broker",
+  "description": "Real estate broker toolkit for coWork CRM and WhatsApp (WaSender). Manage listings, leads, viewings, follow-ups, and send property selections to clients — all from Claude Code.",
+  "author": {
+    "name": "INDEX AI",
+    "email": "info@index.cy"
+  },
+  "userConfig": {
+    "cowork_base_url": {
+      "description": "Your coWork CRM instance URL (e.g. https://yourcompany.cowork.io)",
+      "sensitive": false
+    },
+    "cowork_api_key": {
+      "description": "Your coWork CRM API key (Settings > API in your coWork dashboard)",
+      "sensitive": true
+    },
+    "wasender_api_key": {
+      "description": "Your WaSender API key (from wasenderapi.com dashboard)",
+      "sensitive": true
+    }
+  }
+}

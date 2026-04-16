@@ -1,0 +1,10 @@
+# Credentials — NEVER commit
+credentials.json
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Plugin data directory (local to each user)
+data/
