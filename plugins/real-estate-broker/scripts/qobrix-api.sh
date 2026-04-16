@@ -42,7 +42,7 @@ CURL_ARGS=(
   -X "$METHOD"
   -H "Content-Type: application/json"
   -H "Accept: application/json"
-  -H "Authorization: Bearer ${QOBRIX_KEY}"
+  -H "X-Api-Key: ${QOBRIX_KEY}"
   -H "X-Api-User: ${QOBRIX_USER}"
   --max-time 30
 )
