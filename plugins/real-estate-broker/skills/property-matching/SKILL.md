@@ -19,7 +19,7 @@ Match available property listings against customer preferences stored in Qobrix 
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
 ```
 
-If the script returns `"error":"not_configured"`, tell the user to reinstall the plugin or check their plugin configuration.
+If the script returns `"error":"not_configured"`, tell the user to run `/setup` to configure their API credentials.
 
 ## Workflow
 

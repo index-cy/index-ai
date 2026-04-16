@@ -7,17 +7,24 @@
 #   qobrix-api.sh PUT  /api/v2/properties/UUID '{"status":"available"}'
 #   qobrix-api.sh DELETE /api/v2/properties/UUID
 #
-# Credentials are injected by Claude Code via CLAUDE_PLUGIN_OPTION_* env vars
-# from the userConfig defined in plugin.json.
+# Credentials are read from ~/.claude/plugins/data/real-estate-broker/credentials.json
+# Run /setup to configure.
 
 set -euo pipefail
 
-QOBRIX_URL="${CLAUDE_PLUGIN_OPTION_QOBRIX_API_URL:-}"
-QOBRIX_KEY="${CLAUDE_PLUGIN_OPTION_QOBRIX_API_KEY:-}"
-QOBRIX_USER="${CLAUDE_PLUGIN_OPTION_QOBRIX_API_USER:-}"
+CREDS_FILE="$HOME/.claude/plugins/data/real-estate-broker/credentials.json"
+
+if [[ ! -f "$CREDS_FILE" ]]; then
+  echo '{"error":"not_configured","message":"Plugin not configured. Run /setup to enter your Qobrix CRM and WaSender API credentials."}' >&2
+  exit 1
+fi
+
+QOBRIX_URL=$(python3 -c "import json; print(json.load(open('$CREDS_FILE'))['qobrix_api_url'])" 2>/dev/null)
+QOBRIX_KEY=$(python3 -c "import json; print(json.load(open('$CREDS_FILE'))['qobrix_api_key'])" 2>/dev/null)
+QOBRIX_USER=$(python3 -c "import json; print(json.load(open('$CREDS_FILE'))['qobrix_api_user'])" 2>/dev/null)
 
 if [[ -z "$QOBRIX_URL" || -z "$QOBRIX_KEY" ]]; then
-  echo '{"error":"not_configured","message":"Qobrix CRM credentials not set. Reinstall the plugin or update your plugin config to set qobrix_api_url, qobrix_api_key, and qobrix_api_user."}' >&2
+  echo '{"error":"missing_credentials","message":"Qobrix API URL or key is missing. Run /setup to reconfigure."}' >&2
   exit 1
 fi
 

@@ -19,9 +19,13 @@ CRM automation, WhatsApp messaging, listing imports, and lead management — pow
 /plugin install real-estate-broker@index-ai
 ```
 
-During installation you'll be prompted for your Qobrix API URL, API key, API user, and WaSender API key. Sensitive keys go straight to your system keychain.
+Then configure your credentials:
 
-That's it. You're ready to go.
+```
+/setup
+```
+
+You'll enter your Qobrix API URL, API key, API user, and WaSender API key. That's it.
 
 ---
 

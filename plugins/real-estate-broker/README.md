@@ -13,16 +13,22 @@ From the INDEX AI marketplace:
 /plugin install real-estate-broker@index-ai
 ```
 
-During installation, you'll be prompted for:
+After installing, run the setup command:
+
+```
+/setup
+```
+
+You'll be asked for:
 
 | Credential | Where to find it |
 |-----------|-----------------|
-| **Qobrix API URL** | Your instance URL, e.g. `https://yourcompany.qobrix.com` |
+| **Qobrix API URL** | Your instance URL, e.g. `https://yourcompany.eu1.qobrix.com` |
 | **Qobrix API Key** | Settings > API in your Qobrix dashboard |
 | **Qobrix API User** | The email of the API user account in Qobrix |
 | **WaSender API Key** | Your WaSender dashboard at wasenderapi.com |
 
-Sensitive credentials are stored in your system keychain — never in plaintext config files.
+Credentials are stored locally on your machine with restricted file permissions — they never leave your computer.
 
 ---
 
@@ -45,6 +51,7 @@ Sensitive credentials are stored in your system keychain — never in plaintext 
 
 | Command | Description |
 |---------|------------|
+| `/setup` | Configure or reconfigure API credentials |
 | `/new-lead` | Quick-create a lead from email or manual entry |
 
 ---
@@ -68,7 +75,9 @@ The plugin auto-updates from this GitHub repo. When we push changes, everyone ge
 
 ## Reconfigure Credentials
 
-To update your API credentials, go to your Claude Code settings and edit the plugin configuration for `real-estate-broker`.
+```
+/setup reset
+```
 
 ---
 

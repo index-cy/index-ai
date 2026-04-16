@@ -19,7 +19,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[B
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" METHOD "/api/ENDPOINT" '[BODY]'
 ```
 
-If either script returns `"error":"not_configured"`, tell the user to reinstall the plugin or check their plugin configuration.
+If either script returns `"error":"not_configured"`, tell the user to run `/setup` to configure their API credentials.
 
 ## Workflow
 
