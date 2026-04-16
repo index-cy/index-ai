@@ -15,7 +15,7 @@ Send one or more property listings to a customer via WhatsApp (WaSender API), fo
 ## API Access
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" METHOD "/api/ENDPOINT" '[BODY]'
 ```
 
@@ -23,21 +23,21 @@ If either script returns `"error":"not_configured"`, tell the user to reinstall 
 
 ## Workflow
 
-1. **Identify the customer.** Look up the contact in coWork CRM:
+1. **Identify the customer.** Look up the contact in Qobrix CRM:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/contacts?search=first_name%20contains%20%22{name}%22&limit=10"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/contacts?search=first_name%20contains%20%22{name}%22&limit=10"
    ```
    Confirm their name and phone number (for WhatsApp).
 
-2. **Select properties.** If the user hasn't specified exact properties, search coWork:
+2. **Select properties.** If the user hasn't specified exact properties, search Qobrix:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/properties?search=status%20%3D%3D%20%22available%22%20and%20property_type%20%3D%3D%20%22apartment%22&limit=25"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/properties?search=status%20%3D%3D%20%22available%22%20and%20property_type%20%3D%3D%20%22apartment%22&limit=25"
    ```
    Present a short summary list and let the user confirm which to send.
 
 3. **Fetch full details.** For each selected property:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/properties/{id}"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/properties/{id}"
    ```
 
 4. **Choose delivery channel.** Ask the user: WhatsApp or email? Default to WhatsApp if the customer has a phone number.
@@ -77,9 +77,9 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/send-message" \
   '{"to":"{phone}","text":"These are {count} properties matching your criteria. Let me know which ones interest you and I can arrange viewings!"}'
 ```
 
-6. **Log the activity.** Create a task/note in coWork:
+6. **Log the activity.** Create a task/note in Qobrix:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" POST "/api/v2/tasks" \
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" \
      '{"title":"Sent {count} properties to {name}","contact_id":"{id}","type":"follow_up","status":"completed"}'
    ```
 

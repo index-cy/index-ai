@@ -2,12 +2,12 @@
 
 All skills in this plugin use two shell scripts to call external APIs. Credentials are automatically injected by Claude Code from the `userConfig` defined in `plugin.json` — they're set during plugin installation.
 
-## coWork CRM API
+## Qobrix CRM API
 
-**Script:** `${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh`
+**Script:** `${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh`
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" METHOD "/api/v2/ENDPOINT" '[JSON_BODY]'
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[JSON_BODY]'
 ```
 
 ### Common Endpoints
@@ -40,7 +40,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" METHOD "/api/v2/ENDPOINT" '[J
 Pass search expressions via URL-encoded `search` query parameter:
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET \
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET \
   '/api/v2/properties?search=status%20%3D%3D%20%22available%22%20and%20property_type%20%3D%3D%20%22apartment%22&limit=25'
 ```
 

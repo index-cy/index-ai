@@ -1,21 +1,21 @@
 ---
 name: update-opportunity
 description: >
-  Update an opportunity or deal in coWork CRM. Use when the user says "update
+  Update an opportunity or deal in Qobrix CRM. Use when the user says "update
   the deal", "move opportunity to next stage", "update CRM", "change deal status",
   "add notes to opportunity", "update the pipeline", "mark deal as", or wants to
-  modify any aspect of an existing opportunity in coWork.
+  modify any aspect of an existing opportunity in Qobrix.
 version: 1.0.0
 ---
 
-# Update Opportunity in coWork CRM
+# Update Opportunity in Qobrix CRM
 
-Modify an existing opportunity/deal in the coWork CRM pipeline — change stage, add notes, update amount, set next actions, or reassign.
+Modify an existing opportunity/deal in the Qobrix CRM pipeline — change stage, add notes, update amount, set next actions, or reassign.
 
 ## API Access
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
 ```
 
 If the script returns `"error":"not_configured"`, tell the user to reinstall the plugin or check their plugin configuration.
@@ -26,23 +26,23 @@ If the script returns `"error":"not_configured"`, tell the user to reinstall the
 
    By customer name:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/contacts?search=first_name%20contains%20%22{name}%22&limit=10"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/contacts?search=first_name%20contains%20%22{name}%22&limit=10"
    ```
    Then filter opportunities by contact:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/opportunities?search=contact_id%20%3D%3D%20%22{contact_id}%22&limit=10"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=contact_id%20%3D%3D%20%22{contact_id}%22&limit=10"
    ```
 
    By stage:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/opportunities?search=stage%20%3D%3D%20%22{stage}%22&limit=25"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=stage%20%3D%3D%20%22{stage}%22&limit=25"
    ```
 
    If multiple matches, present a numbered list and ask the user to choose.
 
 2. **Fetch current state.**
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/opportunities/{id}"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities/{id}"
    ```
    Show current details: stage, amount, contact, property, notes, last activity.
 
@@ -54,13 +54,13 @@ If the script returns `"error":"not_configured"`, tell the user to reinstall the
 
 4. **Confirm and update.** Show the user what will change (before > after) and get confirmation.
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" PUT "/api/v2/opportunities/{id}" \
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" PUT "/api/v2/opportunities/{id}" \
      '{"stage":"{new_stage}","notes":"{updated_notes}"}'
    ```
 
 5. **Create follow-up task if needed.**
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" POST "/api/v2/tasks" \
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" \
      '{"title":"{next_action}","due_date":"{date}","opportunity_id":"{id}","type":"follow_up"}'
    ```
 

@@ -1,6 +1,6 @@
-# coWork CRM Search Expressions Reference
+# Qobrix CRM Search Expressions Reference
 
-coWork uses a custom query language for filtering records. Pass these via the URL-encoded `search` query parameter.
+Qobrix uses a custom query language for filtering records. Pass these via the URL-encoded `search` query parameter.
 
 ## Operators
 

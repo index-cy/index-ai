@@ -19,7 +19,7 @@ CRM automation, WhatsApp messaging, listing imports, and lead management — pow
 /plugin install real-estate-broker@index-ai
 ```
 
-During installation you'll be prompted for your coWork CRM URL, API key, and WaSender API key. Sensitive keys go straight to your system keychain.
+During installation you'll be prompted for your Qobrix API URL, API key, API user, and WaSender API key. Sensitive keys go straight to your system keychain.
 
 That's it. You're ready to go.
 
@@ -29,7 +29,7 @@ That's it. You're ready to go.
 
 ### real-estate-broker
 
-Full real estate broker toolkit connecting **coWork CRM** and **WhatsApp** (WaSender API).
+Full real estate broker toolkit connecting **Qobrix CRM** and **WhatsApp** (WaSender API).
 
 | Feature | What it does |
 |---------|-------------|
@@ -42,7 +42,7 @@ Full real estate broker toolkit connecting **coWork CRM** and **WhatsApp** (WaSe
 | Property Matching | Scores properties against buyer preferences |
 | Update Opportunity | Pipeline stage management with notes |
 
-**Requirements:** coWork CRM account with API access, WaSender API account.
+**Requirements:** Qobrix CRM account with API access, WaSender API account.
 
 [Full documentation](plugins/real-estate-broker/README.md)
 

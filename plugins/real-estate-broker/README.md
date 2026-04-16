@@ -1,6 +1,6 @@
 # Real Estate Broker — Claude Code Plugin
 
-Real estate broker toolkit for **coWork CRM** and **WhatsApp** (WaSender API).  
+Real estate broker toolkit for **Qobrix CRM** and **WhatsApp** (WaSender API).  
 Manage listings, leads, viewings, follow-ups, and send property selections to clients — all from Claude Code.
 
 ---
@@ -17,8 +17,9 @@ During installation, you'll be prompted for:
 
 | Credential | Where to find it |
 |-----------|-----------------|
-| **coWork API URL** | Your instance URL, e.g. `https://yourcompany.cowork.io` |
-| **coWork API Key** | Settings > API in your coWork dashboard |
+| **Qobrix API URL** | Your instance URL, e.g. `https://yourcompany.qobrix.com` |
+| **Qobrix API Key** | Settings > API in your Qobrix dashboard |
+| **Qobrix API User** | The email of the API user account in Qobrix |
 | **WaSender API Key** | Your WaSender dashboard at wasenderapi.com |
 
 Sensitive credentials are stored in your system keychain — never in plaintext config files.
@@ -52,7 +53,7 @@ Sensitive credentials are stored in your system keychain — never in plaintext 
 
 This plugin uses **direct API calls** (no MCP servers required). Two shell scripts handle authentication:
 
-- `scripts/cowork-api.sh` — calls coWork CRM REST API
+- `scripts/qobrix-api.sh` — calls Qobrix CRM REST API
 - `scripts/wasender-api.sh` — calls WaSender WhatsApp API
 
 Credentials are injected automatically by Claude Code as environment variables from the `userConfig` you filled in at install time. Skills tell Claude *what* to do and *which API calls* to make. Claude runs the shell scripts, reads the JSON responses, and acts accordingly.
@@ -74,7 +75,7 @@ To update your API credentials, go to your Claude Code settings and edit the plu
 ## Requirements
 
 - [Claude Code](https://claude.ai/code) (CLI, desktop, or web)
-- A coWork CRM account with API access enabled
+- A Qobrix CRM account with API access enabled
 - A WaSender API account with an active WhatsApp session
 - `curl` (pre-installed on macOS/Linux)
 

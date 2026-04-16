@@ -1,7 +1,7 @@
 ---
 name: import-listing
 description: >
-  Import a property listing from a URL into coWork CRM. Use when the user says
+  Import a property listing from a URL into Qobrix CRM. Use when the user says
   "import this listing", "add this property from bazaraki", "import from index",
   "add this buysellcyprus listing", "scrape this property", "import listing",
   pastes a URL from bazaraki.com, index.cy, or buysellcyprus.com, or wants to
@@ -11,12 +11,12 @@ version: 1.0.0
 
 # Import Listing from URL
 
-Scrape a property listing from a URL and create it in coWork CRM with correct field mapping, including automatic location UUID resolution, seller/agency linking, and photo upload.
+Scrape a property listing from a URL and create it in Qobrix CRM with correct field mapping, including automatic location UUID resolution, seller/agency linking, and photo upload.
 
 ## API Access
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
 ```
 
 If the script returns `"error":"not_configured"`, tell the user to reinstall the plugin or check their plugin configuration.
@@ -34,7 +34,7 @@ If the script returns `"error":"not_configured"`, tell the user to reinstall the
 
 Use WebFetch to retrieve the listing page. Extract these fields:
 
-| Listing Field | coWork Field | Type | Notes |
+| Listing Field | Qobrix Field | Type | Notes |
 |--------------|-------------|------|-------|
 | Title/Name | `name` | string | Required |
 | Sale price | `list_selling_price_amount` | float | Numeric only, no currency |
@@ -56,10 +56,10 @@ Use WebFetch to retrieve the listing page. Extract these fields:
 
 ## Step 2: Resolve Location UUID
 
-coWork requires a location UUID, not a plain text city name.
+Qobrix requires a location UUID, not a plain text city name.
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/locations?search={district}%20{area}"
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/locations?search={district}%20{area}"
 ```
 
 If no exact match, try: fuzzy match on area, match on district only, or ask the user.
@@ -67,14 +67,14 @@ If no exact match, try: fuzzy match on area, match on district only, or ask the 
 ## Step 3: Map Enum Values
 
 ### `sale_rent`
-| Listing text | coWork value |
+| Listing text | Qobrix value |
 |-------------|-------------|
 | For sale / buy | `for_sale` |
 | For rent / to let | `for_rent` |
 | Both | `for_sale_and_rent` |
 
 ### `property_type`
-| Listing text | coWork code |
+| Listing text | Qobrix code |
 |-------------|------------|
 | Apartment / Flat | `apartment` |
 | House / Detached / Villa | `house` |
@@ -86,7 +86,7 @@ If no exact match, try: fuzzy match on area, match on district only, or ask the 
 | Other | `other` |
 
 ### `furnished`
-| Listing text | coWork value |
+| Listing text | Qobrix value |
 |-------------|-------------|
 | Fully furnished | `furnished` |
 | Semi / partly | `semi_furnished` |
@@ -113,7 +113,7 @@ Images:      7 photos found
 
 Source: https://index.cy/sale/9140726-...
 ---
-Create in coWork?
+Create in Qobrix?
 ```
 
 Wait for confirmation.
@@ -121,7 +121,7 @@ Wait for confirmation.
 ## Step 5: Create Property
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" POST "/api/v2/properties" \
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/properties" \
   '{"name":"...","property_type":"apartment","sale_rent":"for_sale","list_selling_price_amount":375000,"bedrooms":3,"bathrooms":1,"covered_area_amount":99,"location":"{location_uuid}","status":"available","description":"..."}'
 ```
 
@@ -141,24 +141,24 @@ Original agency: {agency_name_if_found}
 
 After creating, look up the listing agency:
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/contacts?search=first_name%20contains%20%22{agency_name}%22&limit=5"
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/contacts?search=first_name%20contains%20%22{agency_name}%22&limit=5"
 ```
 
 If not found, create:
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" POST "/api/v2/contacts" '{"first_name":"{agency_name}","is_company":true}'
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/contacts" '{"first_name":"{agency_name}","is_company":true}'
 ```
 
 Then link:
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" PUT "/api/v2/properties/{id}" '{"seller":"{contact_uuid}"}'
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" PUT "/api/v2/properties/{id}" '{"seller":"{contact_uuid}"}'
 ```
 
 ## Step 5.6: Upload Photos
 
 For each image URL:
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" POST "/api/v2/properties/{id}/media" \
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/properties/{id}/media" \
   '{"url":"{image_url}","display_order":{N},"category":"{featured_photo|photos}"}'
 ```
 
@@ -169,7 +169,7 @@ If upload fails with permission error, collect all URLs and show them for manual
 ## Step 6: Report Result
 
 ```
-Created in coWork: #{id} — {title}
+Created in Qobrix: #{id} — {title}
 Open: {crm_url}/properties/view/{id}
 
 Seller:  {agency} [linked]

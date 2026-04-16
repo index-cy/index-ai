@@ -10,12 +10,12 @@ version: 1.0.0
 
 # Appointment Scheduling
 
-Schedule property viewings and meetings, create tasks in coWork, and send confirmations to customers via WhatsApp.
+Schedule property viewings and meetings, create tasks in Qobrix, and send confirmations to customers via WhatsApp.
 
 ## API Access
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" METHOD "/api/ENDPOINT" '[BODY]'
 ```
 
@@ -24,14 +24,14 @@ If either script returns `"error":"not_configured"`, tell the user to reinstall 
 ## Workflow
 
 1. **Gather details.** Determine:
-   - Which customer (look up in coWork if needed)
+   - Which customer (look up in Qobrix if needed)
    - Which property or properties to view
    - Preferred date and time
    - Any special requirements
 
-2. **Create the task in coWork.**
+2. **Create the task in Qobrix.**
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" POST "/api/v2/tasks" \
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" \
      '{"title":"Viewing: {property} with {customer}","type":"viewing","due_date":"{iso_date}","contact_id":"{contact_id}","property_id":"{property_id}","description":"{address and notes}"}'
    ```
 
@@ -72,12 +72,12 @@ If either script returns `"error":"not_configured"`, tell the user to reinstall 
 
 4. **Update the opportunity.** If there's a linked opportunity, update its stage to "viewing":
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" PUT "/api/v2/opportunities/{id}" '{"stage":"viewing"}'
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" PUT "/api/v2/opportunities/{id}" '{"stage":"viewing"}'
    ```
 
 5. **Schedule reminders.** Offer to create a reminder for the day before:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" POST "/api/v2/tasks" \
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" \
      '{"title":"Reminder: Viewing tomorrow with {name}","type":"follow_up","due_date":"{day_before}","contact_id":"{id}"}'
    ```
 
@@ -92,7 +92,7 @@ When scheduling a viewing tour (multiple properties):
 ## Rescheduling
 
 When the user says "reschedule viewing":
-1. Find the existing viewing task in coWork
+1. Find the existing viewing task in Qobrix
 2. Update the task with the new date/time
 3. Send an updated confirmation to the customer
 4. Note the change: "Rescheduled from {old date} to {new date}"

@@ -11,21 +11,21 @@ version: 1.0.0
 
 # Property Matching
 
-Match available property listings against customer preferences stored in coWork CRM and suggest the best fits.
+Match available property listings against customer preferences stored in Qobrix CRM and suggest the best fits.
 
 ## API Access
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[BODY]'
 ```
 
 If the script returns `"error":"not_configured"`, tell the user to reinstall the plugin or check their plugin configuration.
 
 ## Workflow
 
-1. **Get customer preferences.** Look up the contact in coWork:
+1. **Get customer preferences.** Look up the contact in Qobrix:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET "/api/v2/contacts/{id}"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/contacts/{id}"
    ```
    Extract their stored preferences:
    - Property type (apartment, villa, house, office, land, etc.)
@@ -37,7 +37,7 @@ If the script returns `"error":"not_configured"`, tell the user to reinstall the
 
 2. **Search matching properties.**
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/cowork-api.sh" GET \
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET \
      "/api/v2/properties?search=status%20%3D%3D%20%22available%22%20and%20property_type%20%3D%3D%20%22{type}%22%20and%20bedrooms%20%3E%3D%20{min_beds}&limit=50"
    ```
    Cast a slightly wider net: include properties 10-15% above budget and in adjacent areas. Only include `status == "available"`.

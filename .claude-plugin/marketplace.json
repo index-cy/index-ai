@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "real-estate-broker",
-      "description": "Real estate broker toolkit for coWork CRM and WhatsApp (WaSender). Manage listings, leads, viewings, follow-ups, and send property selections to clients.",
+      "description": "Real estate broker toolkit for Qobrix CRM and WhatsApp (WaSender). Manage listings, leads, viewings, follow-ups, and send property selections to clients.",
       "author": {
         "name": "INDEX AI",
         "email": "info@index.cy"
