@@ -60,10 +60,10 @@ phone is not null
 ### Opportunities
 ```
 # New leads
-stage == "new"
+status == "new"
 
 # Overdue follow-ups
-next_follow_up_date < TODAY and stage not in ["closed_won", "closed_lost"]
+next_follow_up_date < TODAY and status not in ["closed_won", "closed_lost"]
 ```
 
 ### Tasks

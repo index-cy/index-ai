@@ -32,7 +32,7 @@ If either script returns `"error":"not_configured"`, tell the user to run `/setu
 2. **Create the task in Qobrix.**
    ```bash
    bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" \
-     '{"title":"Viewing: {property} with {customer}","type":"viewing","due_date":"{iso_date}","contact_id":"{contact_id}","property_id":"{property_id}","description":"{address and notes}"}'
+     '{"subject":"Viewing: {property} with {customer}","task_type":"viewing","end_date":"{iso_date}","contact":"{contact_id}","property_id":"{property_id}","description":"{address and notes}"}'
    ```
 
 3. **Send confirmation to customer.**
@@ -72,13 +72,13 @@ If either script returns `"error":"not_configured"`, tell the user to run `/setu
 
 4. **Update the opportunity.** If there's a linked opportunity, update its stage to "viewing":
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" PUT "/api/v2/opportunities/{id}" '{"stage":"viewing"}'
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" PUT "/api/v2/opportunities/{id}" '{"status":"viewing"}'
    ```
 
 5. **Schedule reminders.** Offer to create a reminder for the day before:
    ```bash
    bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" \
-     '{"title":"Reminder: Viewing tomorrow with {name}","type":"follow_up","due_date":"{day_before}","contact_id":"{id}"}'
+     '{"subject":"Reminder: Viewing tomorrow with {name}","task_type":"follow_up","end_date":"{day_before}","contact":"{id}"}'
    ```
 
 ## Multiple Viewings

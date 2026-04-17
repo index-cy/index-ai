@@ -30,12 +30,12 @@ If the script returns `"error":"not_configured"`, tell the user to run `/setup` 
    ```
    Then filter opportunities by contact:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=contact_id%20%3D%3D%20%22{contact_id}%22&limit=10"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=contact_name%20%3D%3D%20%22{contact_id}%22&limit=10"
    ```
 
    By stage:
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=stage%20%3D%3D%20%22{stage}%22&limit=25"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=status%20%3D%3D%20%22{stage}%22&limit=25"
    ```
 
    If multiple matches, present a numbered list and ask the user to choose.
@@ -47,34 +47,58 @@ If the script returns `"error":"not_configured"`, tell the user to run `/setup` 
    Show current details: stage, amount, contact, property, notes, last activity.
 
 3. **Determine changes.** Based on the user's request, identify what needs updating. Common updates:
-   - **Stage change**: new > contacted > viewing > offer > negotiation > closed_won / closed_lost
-   - **Amount**: update the deal value
-   - **Notes**: add notes about what happened
-   - **Next action**: set what needs to happen next and when
+   - **Status change** (field is `status`, not `stage`): new → assigned → informative → proposal → viewing → negotiation → closed_won / closed_lost
+   - **Price range**: update `list_selling_price_from` / `list_selling_price_to`
+   - **Description / notes**: update `description`
+   - **Next follow-up**: update `next_follow_up_date`
 
-4. **Confirm and update.** Show the user what will change (before > after) and get confirmation.
+4. **Confirm and update.** Show the user what will change (before → after) and get confirmation.
    ```bash
    bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" PUT "/api/v2/opportunities/{id}" \
-     '{"stage":"{new_stage}","notes":"{updated_notes}"}'
+     '{"status":"{new_status}","description":"{updated_notes}"}'
    ```
 
 5. **Create follow-up task if needed.**
    ```bash
    bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" \
-     '{"title":"{next_action}","due_date":"{date}","opportunity_id":"{id}","type":"follow_up"}'
+     '{"subject":"{next_action}","end_date":"{iso_date}","related_opportunity":"{id}","contact":"{contact_uuid}"}'
    ```
 
-## Stage Definitions
+## Status Values (verified)
 
-| Stage | Description | Typical Next Actions |
-|-------|-------------|---------------------|
-| new | Fresh lead/inquiry | Contact customer, qualify interest |
-| contacted | Initial contact made | Schedule viewing, send properties |
-| viewing | Viewing scheduled or completed | Get feedback, send more options |
-| offer | Offer submitted | Wait for response, negotiate |
-| negotiation | Active negotiation | Counter-offer, legal review |
-| closed_won | Deal completed | Process paperwork |
-| closed_lost | Deal lost | Record reason, follow up later |
+| Status | Description |
+|--------|-------------|
+| new | Fresh lead, not yet actioned |
+| assigned | Assigned to an agent |
+| informative | Information gathering phase |
+| proposal | Proposal sent / properties shown |
+| viewing | Viewing scheduled or completed |
+| negotiation | Active negotiation |
+| closed_won | Deal completed |
+| closed_lost | Deal lost |
+
+## Field Name Reference (Opportunities)
+
+| Field | Notes |
+|-------|-------|
+| `contact_name` | UUID of related contact (confusingly named — it's a foreign key, not text) |
+| `status` | NOT `stage` |
+| `source` | Fixed enum: `direct`, `agent` only |
+| `buy_rent` | `to_buy` or `to_rent` |
+| `enquiry_type` | Property type they're looking for |
+| `construction_stage` | `completed`, `under_construction`, `off_plan` |
+
+## Field Name Reference (Tasks)
+
+| Field | Notes |
+|-------|-------|
+| `subject` | NOT `title` |
+| `contact` | UUID of related contact (NOT `contact_id`) |
+| `related_opportunity` | UUID of related opportunity (NOT `opportunity_id`) |
+| `property_id` | UUID of related property |
+| `start_date` / `end_date` | ISO dates (NOT `due_date`) |
+| `status` | `new_task`, `in_progress`, `completed`, etc. |
+| `priorities` | `low`, `normal`, `high` |
 
 ## Important Notes
 

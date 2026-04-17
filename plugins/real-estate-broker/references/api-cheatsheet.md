@@ -1,6 +1,6 @@
 # API Quick Reference
 
-All skills in this plugin use two shell scripts to call external APIs. Credentials are automatically injected by Claude Code from the `userConfig` defined in `plugin.json` — they're set during plugin installation.
+All skills in this plugin use two shell scripts to call external APIs. Credentials are stored locally in `~/.claude/plugins/data/real-estate-broker/credentials.json` — set via `/setup`.
 
 ## Qobrix CRM API
 
@@ -25,8 +25,8 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" METHOD "/api/v2/ENDPOINT" '[J
 | Update contact | PUT | `/api/v2/contacts/{id}` | `{...fields...}` |
 | List opportunities | GET | `/api/v2/opportunities?limit=25` | — |
 | Get opportunity | GET | `/api/v2/opportunities/{id}` | — |
-| Create opportunity | POST | `/api/v2/opportunities` | `{"name":"...","contact_id":"..."}` |
-| Update opportunity | PUT | `/api/v2/opportunities/{id}` | `{"stage":"viewing"}` |
+| Create opportunity | POST | `/api/v2/opportunities` | `{"contact_name":"<contact-uuid>","enquiry_type":"apartment","buy_rent":"to_buy","source":"direct","status":"new"}` |
+| Update opportunity | PUT | `/api/v2/opportunities/{id}` | `{"status":"viewing"}` |
 | List tasks | GET | `/api/v2/tasks?limit=25` | — |
 | Create task | POST | `/api/v2/tasks` | `{"title":"...","due_date":"..."}` |
 | Update task | PUT | `/api/v2/tasks/{id}` | `{"status":"completed"}` |
@@ -52,13 +52,27 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET \
 
 All list endpoints support `?limit=N&page=N`. Default limit is 25, max 100.
 
-### Enum Values
+### Enum Values (verified against live API)
 
-**sale_rent:** `for_sale`, `for_rent`, `for_sale_and_rent`
-**property_type:** `apartment`, `house`, `land`, `office`, `retail`, `industrial`, `investment`, `other`
-**furnished:** `furnished`, `semi_furnished`, `optionally_furnished`, `unfurnished`
-**status:** `available`, `under_offer`, `sold`, `rented`, `withdrawn`
-**opportunity stages:** `new`, `contacted`, `viewing`, `offer`, `negotiation`, `closed_won`, `closed_lost`
+**Property fields:**
+- `sale_rent`: `for_sale`, `for_rent`, `for_sale_and_rent`
+- `property_type` / `type`: `apartment`, `house`, `land`, `office`, `retail`, `industrial`, `investment`, `other`
+- `furnished`: `furnished`, `semi_furnished`, `optionally_furnished`, `unfurnished`
+- `status` (property): `available`, `sold`, `rented`, `under_offer`, `withdrawn`
+- `construction_year`: integer (NOT `year_built`)
+
+**Opportunity fields:**
+- `contact_name`: UUID of the related contact (NOT `contact_id`)
+- `status` (NOT `stage`): `new`, `assigned`, `informative`, `proposal`, `viewing`, `negotiation`, `closed_won`, `closed_lost`
+- `source` (fixed enum — only these two): `direct`, `agent`
+- `buy_rent`: `to_buy`, `to_rent`
+- `enquiry_type`: matches property types (`apartment`, `house`, `land`, etc.)
+- `construction_stage`: `completed`, `under_construction`, `off_plan`
+
+**Tips:**
+- To expand the contact on an opportunity, use `?include[]=ContactNameContacts`
+- `virtual_contact_name` is a read-only display field — don't send it in POST/PUT
+- `ref` is an auto-generated integer reference number — don't set it on create
 
 ---
 

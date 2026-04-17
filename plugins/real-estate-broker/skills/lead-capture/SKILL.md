@@ -67,7 +67,7 @@ When the user shares an inquiry email or lead details:
    New opportunity:
    ```bash
    bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/opportunities" \
-     '{"name":"{description}","contact_id":"{contact_id}","stage":"new","source":"{source}"}'
+     '{"description":"{description}","contact_name":"{contact_id}","status":"new","source":"direct","buy_rent":"to_buy","enquiry_type":"{property_type}"}'
    ```
 
 5. **Suggest next steps**: "Want me to send an acknowledgment to {name} via WhatsApp?"

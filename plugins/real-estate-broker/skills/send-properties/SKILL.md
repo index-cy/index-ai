@@ -80,7 +80,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/send-message" \
 6. **Log the activity.** Create a task/note in Qobrix:
    ```bash
    bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" \
-     '{"title":"Sent {count} properties to {name}","contact_id":"{id}","type":"follow_up","status":"completed"}'
+     '{"subject":"Sent {count} properties to {name}","contact":"{id}","task_type":"follow_up","status":"completed"}'
    ```
 
 ## Important Notes

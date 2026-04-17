@@ -44,7 +44,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/tasks?search=sta
 
 **New/unprocessed leads:**
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=stage%20%3D%3D%20%22new%22&limit=25"
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=status%20%3D%3D%20%22new%22&limit=25"
 ```
 
 **Pipeline overview (count by stage):**

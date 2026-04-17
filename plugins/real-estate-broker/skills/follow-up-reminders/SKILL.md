@@ -30,7 +30,7 @@ If either script returns `"error":"not_configured"`, tell the user to run `/setu
 
 2. **Get active opportunities.**
    ```bash
-   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=stage%20not%20in%20%5B%22closed_won%22%2C%22closed_lost%22%5D&limit=100"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/opportunities?search=status%20not%20in%20%5B%22closed_won%22%2C%22closed_lost%22%5D&limit=100"
    ```
    For each, check the activity log:
    ```bash
@@ -80,7 +80,7 @@ When the user picks a contact to follow up with, offer to:
   ```
 - Create a follow-up task in Qobrix:
   ```bash
-  bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" '{"title":"Follow up with {name}","due_date":"{date}","contact_id":"{id}","type":"follow_up"}'
+  bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/tasks" '{"subject":"Follow up with {name}","end_date":"{date}","contact":"{id}","task_type":"follow_up"}'
   ```
 - Update the opportunity notes
 
