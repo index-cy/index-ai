@@ -7,28 +7,35 @@
 #   qobrix-api.sh PUT  /api/v2/properties/UUID '{"status":"available"}'
 #   qobrix-api.sh DELETE /api/v2/properties/UUID
 #
-# Credentials are read from ~/.claude/plugins/data/real-estate-broker/credentials.json
-# Run /setup to configure.
+# Credential resolution order:
+#   1. CLAUDE_PLUGIN_OPTION_* env vars (set by Claude Code from userConfig in plugin.json)
+#   2. ~/.claude/plugins/data/real-estate-broker/credentials.json (created by /setup)
 
 set -euo pipefail
 
+# Prefer env vars injected by Claude Code from userConfig
+QOBRIX_URL="${CLAUDE_PLUGIN_OPTION_QOBRIX_API_URL:-}"
+QOBRIX_KEY="${CLAUDE_PLUGIN_OPTION_QOBRIX_API_KEY:-}"
+QOBRIX_USER="${CLAUDE_PLUGIN_OPTION_QOBRIX_API_USER:-}"
+
+# Fall back to local credentials file
 CREDS_FILE="$HOME/.claude/plugins/data/real-estate-broker/credentials.json"
+if [[ -z "$QOBRIX_URL" && -f "$CREDS_FILE" ]]; then
+  QOBRIX_URL=$(python3 -c "import json; print(json.load(open('$CREDS_FILE')).get('qobrix_api_url',''))" 2>/dev/null || echo "")
+fi
+if [[ -z "$QOBRIX_KEY" && -f "$CREDS_FILE" ]]; then
+  QOBRIX_KEY=$(python3 -c "import json; print(json.load(open('$CREDS_FILE')).get('qobrix_api_key',''))" 2>/dev/null || echo "")
+fi
+if [[ -z "$QOBRIX_USER" && -f "$CREDS_FILE" ]]; then
+  QOBRIX_USER=$(python3 -c "import json; print(json.load(open('$CREDS_FILE')).get('qobrix_api_user',''))" 2>/dev/null || echo "")
+fi
 
-if [[ ! -f "$CREDS_FILE" ]]; then
-  echo '{"error":"not_configured","message":"Plugin not configured. Run /setup to enter your Qobrix CRM and WaSender API credentials."}' >&2
+if [[ -z "$QOBRIX_URL" || -z "$QOBRIX_KEY" || -z "$QOBRIX_USER" ]]; then
+  echo '{"error":"not_configured","message":"Qobrix credentials not set. Either reinstall the plugin and enter credentials when prompted, or run /setup to configure them."}' >&2
   exit 1
 fi
 
-QOBRIX_URL=$(python3 -c "import json; print(json.load(open('$CREDS_FILE'))['qobrix_api_url'])" 2>/dev/null)
-QOBRIX_KEY=$(python3 -c "import json; print(json.load(open('$CREDS_FILE'))['qobrix_api_key'])" 2>/dev/null)
-QOBRIX_USER=$(python3 -c "import json; print(json.load(open('$CREDS_FILE'))['qobrix_api_user'])" 2>/dev/null)
-
-if [[ -z "$QOBRIX_URL" || -z "$QOBRIX_KEY" ]]; then
-  echo '{"error":"missing_credentials","message":"Qobrix API URL or key is missing. Run /setup to reconfigure."}' >&2
-  exit 1
-fi
-
-# Strip trailing slash from base URL
+# Strip trailing slash
 QOBRIX_URL="${QOBRIX_URL%/}"
 
 METHOD="${1:?Usage: qobrix-api.sh METHOD PATH [BODY]}"

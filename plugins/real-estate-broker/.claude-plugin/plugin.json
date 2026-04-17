@@ -4,5 +4,23 @@
   "author": {
     "name": "INDEX AI",
     "email": "info@index.cy"
+  },
+  "userConfig": {
+    "qobrix_api_url": {
+      "description": "Your Qobrix CRM instance URL (e.g. https://yourcompany.eu1.qobrix.com)",
+      "sensitive": false
+    },
+    "qobrix_api_user": {
+      "description": "Your Qobrix API User ID (UUID shown when generating the API key)",
+      "sensitive": false
+    },
+    "qobrix_api_key": {
+      "description": "Your Qobrix CRM API key",
+      "sensitive": true
+    },
+    "wasender_api_key": {
+      "description": "Your WaSender API key (from wasenderapi.com dashboard)",
+      "sensitive": true
+    }
   }
 }

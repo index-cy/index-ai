@@ -5,22 +5,21 @@
 #   wasender-api.sh POST /api/send-message '{"to":"35799123456","text":"Hello"}'
 #   wasender-api.sh GET  /api/status
 #
-# Credentials are read from ~/.claude/plugins/data/real-estate-broker/credentials.json
-# Run /setup to configure.
+# Credential resolution order:
+#   1. CLAUDE_PLUGIN_OPTION_WASENDER_API_KEY env var (from userConfig)
+#   2. ~/.claude/plugins/data/real-estate-broker/credentials.json (from /setup)
 
 set -euo pipefail
 
-CREDS_FILE="$HOME/.claude/plugins/data/real-estate-broker/credentials.json"
+WASENDER_KEY="${CLAUDE_PLUGIN_OPTION_WASENDER_API_KEY:-}"
 
-if [[ ! -f "$CREDS_FILE" ]]; then
-  echo '{"error":"not_configured","message":"Plugin not configured. Run /setup to enter your Qobrix CRM and WaSender API credentials."}' >&2
-  exit 1
+CREDS_FILE="$HOME/.claude/plugins/data/real-estate-broker/credentials.json"
+if [[ -z "$WASENDER_KEY" && -f "$CREDS_FILE" ]]; then
+  WASENDER_KEY=$(python3 -c "import json; print(json.load(open('$CREDS_FILE')).get('wasender_api_key',''))" 2>/dev/null || echo "")
 fi
 
-WASENDER_KEY=$(python3 -c "import json; print(json.load(open('$CREDS_FILE'))['wasender_api_key'])" 2>/dev/null)
-
 if [[ -z "$WASENDER_KEY" ]]; then
-  echo '{"error":"missing_credentials","message":"WaSender API key is missing. Run /setup to reconfigure."}' >&2
+  echo '{"error":"not_configured","message":"WaSender API key not set. Either reinstall the plugin and enter credentials when prompted, or run /setup to configure them."}' >&2
   exit 1
 fi
 
