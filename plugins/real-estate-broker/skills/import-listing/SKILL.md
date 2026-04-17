@@ -46,6 +46,12 @@ Use WebFetch to retrieve the listing page. Extract these fields:
 | For sale or rent | `sale_rent` | enum | See values below |
 | Property type | `property_type` | enum code | See values below |
 | City/Area | location lookup | string | Used to find location UUID |
+| Area/Town | `city` | string | E.g. "Sotiros", "Mesa Geitonia" |
+| District | `state` | string | E.g. "Larnaca", "Limassol" |
+| Country code | `country` | string | ISO-2, e.g. `CY` |
+| Street address | `street` | string | Full street name + number if shown |
+| Postal code | `post_code` | string | ZIP / postcode if shown |
+| Lat,Lng | `coordinates` | string | Format: `"34.9225,33.6210"` |
 | Floor | `floor_number` | integer | |
 | Year built | `year_built` | integer | |
 | Furnished | `furnished` | enum | See values below |
@@ -54,15 +60,27 @@ Use WebFetch to retrieve the listing page. Extract these fields:
 | Agency/Seller | contact lookup | string | Used to find/create seller |
 | Image URLs | media upload | array | Upload after property creation |
 
-## Step 2: Resolve Location UUID
+## Step 2: Resolve Location UUID AND Address Fields
 
-Qobrix requires a location UUID, not a plain text city name.
+Qobrix stores location in **two complementary ways** — both must be populated:
 
+1. **`location` UUID** — links to the Qobrix locations tree (district/area hierarchy).
+2. **Free-text address fields** — `street`, `post_code`, `city`, `state`, `country`, `coordinates`. These are what show on the property "Location" page. If you only set `location` + `coordinates`, Street and Post Code display as "--".
+
+### 2a. Look up the location UUID
 ```bash
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" GET "/api/v2/locations?search={district}%20{area}"
 ```
-
 If no exact match, try: fuzzy match on area, match on district only, or ask the user.
+
+### 2b. Extract the street address and postal code from the listing page
+Scrape hard for these — they are often tucked into the "Location" / "Address" section, the breadcrumb, or the embedded Google Maps block:
+- **Street** — full street name, plus number if displayed. If the listing only gives a neighbourhood name, put that in `city` (not `street`) and leave `street` null.
+- **Postal code** — Cyprus postcodes are 4 digits (e.g. `6046`, `7550`). Look for them near the address, in structured data (JSON-LD), or in the map iframe URL (`&q=...%206046`).
+- **Coordinates** — Extract from the map embed (`q=lat,lng` or `center=lat,lng`). Format as `"lat,lng"` string.
+- **City / State / Country** — From breadcrumbs or title (e.g. "Larnaca → Sotiros" → `state=Larnaca`, `city=Sotiros`, `country=CY`).
+
+If street or post_code cannot be found on the page, leave them null — don't invent values.
 
 ## Step 3: Map Enum Values
 
@@ -108,6 +126,9 @@ Area:        99m2 covered
 Floor:       1st
 Built:       1997
 Location:    Mesa Geitonia, Limassol [matched UUID]
+Street:      Agias Fylaxeos 128
+Post Code:   3025
+Coordinates: 34.6892,33.0411
 Agency:      Kazo Real Estate [found in contacts]
 Images:      7 photos found
 
@@ -122,7 +143,7 @@ Wait for confirmation.
 
 ```bash
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/qobrix-api.sh" POST "/api/v2/properties" \
-  '{"name":"...","property_type":"apartment","sale_rent":"for_sale","list_selling_price_amount":375000,"bedrooms":3,"bathrooms":1,"covered_area_amount":99,"location":"{location_uuid}","status":"available","description":"..."}'
+  '{"name":"...","property_type":"apartment","sale_rent":"for_sale","list_selling_price_amount":375000,"bedrooms":3,"bathrooms":1,"covered_area_amount":99,"location":"{location_uuid}","street":"{street}","post_code":"{postcode}","city":"{area}","state":"{district}","country":"CY","coordinates":"{lat},{lng}","status":"available","description":"..."}'
 ```
 
 Always include in `description`:
