@@ -91,12 +91,30 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" METHOD "/api/ENDPOINT" '[JS
 | Send text | POST | `/api/send-message` | `{"to":"35799123456","text":"Hello!"}` |
 | Send image | POST | `/api/send-image` | `{"to":"35799123456","url":"https://...","caption":"..."}` |
 | Send location | POST | `/api/send-location` | `{"to":"35799123456","lat":34.7,"lng":33.0,"name":"..."}` |
+| Upload media (base64) | POST | `/api/upload` | `{"base64":"data:image/jpeg;base64,..."}` |
 | Session status | GET | `/api/status` | — |
 | Get messages | GET | `/api/messages?limit=20` | — |
 
 ### Phone Number Format
 
 Always use international format without `+` prefix: `35799123456` (Cyprus example).
+
+### Sending Images from Base64 or Local Files
+
+`/api/send-image` only accepts a public HTTPS URL. When the source is base64 (or a local file you base64-encode), upload it to `/api/upload` first — the response returns `publicUrl` (valid 24h) which you then pass to `/api/send-image`.
+
+```bash
+# Upload (JSON/base64 method — works with the existing wasender-api.sh script)
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/upload" \
+  '{"base64":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQE..."}'
+# -> {"success":true,"publicUrl":"https://wasenderapi.com/media/<uuid>.jpg"}
+
+# Then send
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/send-image" \
+  '{"to":"35799123456","url":"https://wasenderapi.com/media/<uuid>.jpg","caption":"..."}'
+```
+
+MIME can be embedded in the Data URL prefix (`data:<mime>;base64,...`) or passed separately as `"mimetype":"image/jpeg"`. Size limits: images 16 MB, videos 50 MB, audio 16 MB, documents 100 MB, stickers (webp) 5 MB. Files are validated by magic numbers against the declared MIME.
 
 ---
 

@@ -59,11 +59,32 @@ For each property, compose a message using this template:
 Ref: {Reference number}
 ```
 
-If the property has a main photo URL, send the image first with caption:
+If the property has a main photo, send the image first with caption.
+
+**If you already have a public HTTPS image URL** (e.g. from Qobrix media), use it directly:
 ```bash
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/send-image" \
   '{"to":"{phone}","url":"{image_url}","caption":"{property_title} — {price}"}'
 ```
+
+**If you only have the image as base64 or a local file**, WaSender's `/api/send-image` requires a public URL — so upload to WaSender's media endpoint first, then send using the returned `publicUrl` (valid 24h):
+
+```bash
+# Step 1 — upload base64 to WaSender, get publicUrl
+UPLOAD_RESP=$(bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/upload" \
+  '{"base64":"data:image/jpeg;base64,{BASE64_STRING}"}')
+PUBLIC_URL=$(echo "$UPLOAD_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['publicUrl'])")
+
+# Step 2 — send the image using the returned URL
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/send-image" \
+  "{\"to\":\"{phone}\",\"url\":\"$PUBLIC_URL\",\"caption\":\"{property_title} — {price}\"}"
+```
+
+Notes on the upload step:
+- Include the `data:<mime>;base64,` prefix in the `base64` field — the API parses the MIME type from it. Alternatively pass `"mimetype":"image/jpeg"` as a separate field.
+- Size limits: images 16 MB, videos 50 MB, documents 100 MB, audio 16 MB, stickers (webp) 5 MB.
+- For local files, convert first: `BASE64=$(base64 -i path/to/image.jpg)` (macOS) and build the Data URL.
+- The returned `publicUrl` is valid for 24 hours — send the image within that window.
 
 Then send the text details:
 ```bash

@@ -58,10 +58,19 @@ If either script returns `"error":"not_configured"`, tell the user to run `/setu
      '{"to":"{phone}","text":"{confirmation_message}"}'
    ```
 
-   Optionally send the property photo:
+   Optionally send the property photo. If you already have a public HTTPS URL, pass it straight to `/api/send-image`:
    ```bash
    bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/send-image" \
      '{"to":"{phone}","url":"{image_url}","caption":"{property_title}"}'
+   ```
+
+   If the image is base64 or a local file, upload to WaSender first and use the returned `publicUrl`:
+   ```bash
+   UPLOAD_RESP=$(bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/upload" \
+     '{"base64":"data:image/jpeg;base64,{BASE64_STRING}"}')
+   PUBLIC_URL=$(echo "$UPLOAD_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['publicUrl'])")
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/wasender-api.sh" POST "/api/send-image" \
+     "{\"to\":\"{phone}\",\"url\":\"$PUBLIC_URL\",\"caption\":\"{property_title}\"}"
    ```
 
    Optionally send location pin:
