@@ -8,3 +8,9 @@ Thumbs.db
 
 # Plugin data directory (local to each user)
 data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
