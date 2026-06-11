@@ -1,6 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "index-ai",
+  "version": "0.2.0",
   "description": "INDEX AI — plugins for real estate professionals in Cyprus. CRM automation, WhatsApp messaging, listing imports, and lead management powered by Claude Code.",
   "owner": {
     "name": "INDEX AI",
@@ -9,7 +10,8 @@
   "plugins": [
     {
       "name": "real-estate-broker",
-      "description": "Real estate broker toolkit for Qobrix CRM and WhatsApp (WaSender). Manage listings, leads, viewings, follow-ups, and send property selections to clients.",
+      "version": "0.2.0",
+      "description": "Real estate broker toolkit for Qobrix CRM and WhatsApp (WaSender). Manage listings, leads, viewings, follow-ups, send property selections, run resale-reactivation campaigns, import listings from portals, update prices from developer PDFs, and monitor agent lead inactivity.",
       "author": {
         "name": "INDEX AI",
         "email": "info@index.cy"
