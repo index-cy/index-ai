@@ -1,6 +1,7 @@
 {
   "name": "real-estate-broker",
-  "description": "Real estate broker toolkit for Qobrix CRM and WhatsApp (WaSender). Manage listings, leads, viewings, follow-ups, and send property selections to clients — all from Claude Code.",
+  "version": "0.2.0",
+  "description": "Real estate broker toolkit for Qobrix CRM and WhatsApp (WaSender). Manage listings, leads, viewings, follow-ups, send property selections, run resale-reactivation campaigns, import listings from portals, update prices from developer PDFs, and monitor agent lead inactivity — all from Claude Code.",
   "author": {
     "name": "INDEX AI",
     "email": "info@index.cy"
